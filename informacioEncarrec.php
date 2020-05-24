@@ -27,6 +27,7 @@
 		}
 		.srch{
 			padding-left: 1400px;
+			margin:auto;	
 		}
 		.btn-success{
 			margin-left: 200px;
@@ -109,9 +110,9 @@
 	<?php
 	$c = 0;
 	if(isset($_SESSION['login_user'])){
-			$sql="SELECT client.username,email,llibres.llibreID,nom,autor,editorial,encarrecs.dataEncarrec,dataRetorn,Aprovació,poguerEditar
+			$sql="SELECT client.username,email,llibres.llibreID,ISBN,nom,autor,editorial,encarrecs.dataEncarrec,dataRetorn,Aprovació,poguerEditar,isbnEncarrec
 			FROM client
-			INNER JOIN encarrecs ON client.username = encarrecs.username
+ 			INNER JOIN encarrecs ON client.username = encarrecs.username
 			INNER JOIN llibres ON encarrecs.llibreID = llibres.llibreID
 			WHERE client.username = '$_SESSION[login_user]';";
 			$res = mysqli_query($db,$sql);
@@ -122,12 +123,18 @@
 				echo "<th>"; echo "Data final";  echo "</th>";
 				echo "<th>"; echo "ID Encàrrec";  echo "</th>";
 				echo "<th>"; echo "ID Llibre";  echo "</th>";
+				echo "<th>"; echo "ISBN";  echo "</th>";
 				echo "<th>"; echo "Títol";  echo "</th>";
 				echo "<th>"; echo "Autor";  echo "</th>";
 				echo "<th>"; echo "Editorial";  echo "</th>";
 				echo "<th>"; echo "Estat";  echo "</th>";
 				
 			echo "</tr>";	
+
+			if(!$res){
+				var_dump(mysqli_error($db));
+				exit;
+			}
 			//Si passa la data de retorn i el llibre no ha estat retornat, aquest serà calificat com a EXPIRAT i podrà ser retornat des de l'apartat d'expirats.
 			while($row=mysqli_fetch_assoc($res)){
 				$data = date("Y-m-d");
@@ -142,6 +149,7 @@
 				echo "<td>"; echo $row['dataRetorn']; echo "</td>";
 				echo "<td>"; echo $row['poguerEditar']; echo "</td>";
 				echo "<td>"; echo $row['llibreID']; echo "</td>";
+				echo "<td>"; echo $row['ISBN']; echo "</td>";
 				echo "<td>"; echo $row['nom']; echo "</td>";
 				echo "<td>"; echo $row['autor']; echo "</td>";
 				echo "<td>"; echo $row['editorial']; echo "</td>";

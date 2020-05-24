@@ -79,11 +79,15 @@
 		<form class="navbar-form" method="post" name="form1">
 			<input class="btn btn-light" type="submit" name="submit1" value="Demana" style="height: 40px; width: 100px; float: right;">
 			<input style="width: 200px; float: right;" class="form-control" type="text" name="llibreID" placeholder="ID del llibre" required="">
-			
 		</form>
 	</div>
-
-
+	<br><br>
+	<div>
+		<form class="navbar-form" method="post" name="form1">
+			<input class="btn btn-light" type="submit" name="submit2" value="Cerca" style="height: 40px; width: 100px; float: right;">
+			<input style="width: 200px; float: right;" class="form-control" type="text" name="ISBN" placeholder="ISBN del llibre" required="">
+		</form>
+	</div>
 	<h2>Llistat de llibres</h2>
 	<?php
 		$var2 = '<p>Sí</p>';
@@ -94,10 +98,49 @@
 		$_POST['date2'] = $date2;
 		$res = mysqli_query($db,"SELECT * FROM `llibres`;");
 
+	if(isset($_POST['submit2'])){
+		if(isset($_SESSION['login_user'])){
+			$seleccionat = mysqli_query($db,"SELECT * FROM `llibres` where ISBN = $_POST[ISBN];");
+			while($row = mysqli_fetch_assoc($seleccionat)){
+				echo "<table class='table table-bordered'>";
+				echo "<tr style='background-color: #804000;'>";
+					echo "<th>"; echo "ID";	echo "</th>";
+					echo "<th>"; echo "Títol";	echo "</th>";
+					echo "<th>"; echo "ISBN";	echo "</th>";
+					echo "<th>"; echo "Autor";	echo "</th>";
+					echo "<th>"; echo "Editorial";	echo "</th>";
+					echo "<th>"; echo "Estat";	echo "</th>";
+					echo "<th>"; echo "Quantitat";	echo "</th>";
+					echo "<th>"; echo "Gèneres";	echo "</th>";
+					echo "<th>"; echo "Disponibilitat";	echo "</th>";
+				echo "</tr>";
+				echo "<tr>";
+					echo "<td>"; echo $row['llibreID']; echo "</td>";
+					echo "<td>"; echo $row['nom']; echo "</td>";
+					echo "<td>"; echo $row['ISBN']; echo "</td>";
+					echo "<td>"; echo $row['autor']; echo "</td>";
+					echo "<td>"; echo $row['editorial']; echo "</td>";
+					echo "<td>"; echo $row['estat']; echo "</td>";
+					echo "<td>"; echo $row['quantitat']; echo "</td>";
+					echo "<td>"; echo $row['gèneres']; echo "</td>";
+					echo "<td>"; echo $row['aprovacio']; echo "</td>";
+				echo "</tr>";
+			}
+			echo "</table>";
+		} else {
+			?>
+				<script type="text/javascript">
+					alert("Has d'entrar al compte per poder buscar un llibre.");
+				</script>
+			<?php
+		}
+	}
+	
 	echo "<table class='table table-bordered table-hover'>";
 	echo "<tr style='background-color: #804000;'>";
 		echo "<th>"; echo "ID";	echo "</th>";
 		echo "<th>"; echo "Títol";	echo "</th>";
+		echo "<th>"; echo "ISBN";	echo "</th>";
 		echo "<th>"; echo "Autor";	echo "</th>";
 		echo "<th>"; echo "Editorial";	echo "</th>";
 		echo "<th>"; echo "Estat";	echo "</th>";
@@ -110,6 +153,7 @@
 		echo "<tr>";
 		echo "<td>"; echo $row['llibreID']; echo "</td>";
 		echo "<td>"; echo $row['nom']; echo "</td>";
+		echo "<td>"; echo $row['ISBN']; echo "</td>";
 		echo "<td>"; echo $row['autor']; echo "</td>";
 		echo "<td>"; echo $row['editorial']; echo "</td>";
 		echo "<td>"; echo $row['estat']; echo "</td>";
@@ -121,7 +165,7 @@
 	echo "</table>";
 	if(isset($_POST['submit1'])){
 		if(isset($_SESSION['login_user'])){
-			mysqli_query($db,"INSERT INTO encarrecs Values('','$_SESSION[login_user]','$_POST[llibreID]','Sí','$_POST[date]','$_POST[date2]');");
+			mysqli_query($db,"INSERT INTO encarrecs Values('','$_SESSION[login_user]','$_POST[llibreID]','','Sí','$_POST[date]','$_POST[date2]');");
 			mysqli_query($db,"UPDATE llibres SET quantitat = quantitat - 1 where llibreID = $_POST[llibreID]");
 			?>
 				<script type="text/javascript">
@@ -136,6 +180,44 @@
 			<?php
 		}
 	}
+
+	/*if(isset($_POST['submit2'])){
+		if(isset($_SESSION['login_user'])){
+			$seleccionat = mysqli_query($db,"SELECT * FROM `llibres` where ISBN = $_POST[ISBN];");
+			while($row = mysqli_fetch_assoc($seleccionat)){
+				echo "<table class='table table-bordered'>";
+				echo "<tr style='background-color: #804000;'>";
+					echo "<th>"; echo "ID";	echo "</th>";
+					echo "<th>"; echo "Títol";	echo "</th>";
+					echo "<th>"; echo "ISBN";	echo "</th>";
+					echo "<th>"; echo "Autor";	echo "</th>";
+					echo "<th>"; echo "Editorial";	echo "</th>";
+					echo "<th>"; echo "Estat";	echo "</th>";
+					echo "<th>"; echo "Quantitat";	echo "</th>";
+					echo "<th>"; echo "Gèneres";	echo "</th>";
+					echo "<th>"; echo "Disponibilitat";	echo "</th>";
+				echo "</tr>";
+				echo "<tr>";
+					echo "<td>"; echo $row['llibreID']; echo "</td>";
+					echo "<td>"; echo $row['nom']; echo "</td>";
+					echo "<td>"; echo $row['ISBN']; echo "</td>";
+					echo "<td>"; echo $row['autor']; echo "</td>";
+					echo "<td>"; echo $row['editorial']; echo "</td>";
+					echo "<td>"; echo $row['estat']; echo "</td>";
+					echo "<td>"; echo $row['quantitat']; echo "</td>";
+					echo "<td>"; echo $row['gèneres']; echo "</td>";
+					echo "<td>"; echo $row['aprovacio']; echo "</td>";
+				echo "</tr>";
+			}
+			echo "</table>";
+		} else {
+			?>
+				<script type="text/javascript">
+					alert("Has d'entrar al compte per poder buscar un llibre.");
+				</script>
+			<?php
+		}
+	}*/
 	?>
 
 </body>
