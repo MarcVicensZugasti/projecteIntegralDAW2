@@ -26,12 +26,18 @@
 			color:white;
 		}
 		.srch{
-			padding-left: 1400px;
-			margin:auto;	
+			/*padding-left: 1400px;
+			margin:auto;	*/
+			float :right;
+			width :22%;
 		}
 		.btn-success{
 			margin-left: 200px;
 		}
+		.btn-warning{
+			margin-left: 180px;
+		}
+
 	</style>
 </head>
 <body>
@@ -79,15 +85,25 @@
 			?>
 		</div>
 	</nav><br>
+	<div>
 	<div class="srch">
 		<form class="navbar-form" method="post" name="form1">
 			<input style="width: 300px; margin-left: 85px;" class="form-control" type="text" name="username" placeholder="Usuari" required=""><br>
 			<input style="width: 300px; margin-left: 85px; "class="form-control" type="text" name="llibreID" placeholder="ID del llibre" required=""><br>
 			<input style="width: 300px; margin-left: 85px;" class="form-control" type="text" name="poguerEditar" placeholder="ID encàrrec" required=""><br>
 			<button class="btn btn-success" name="submit1" type="submit">Tornar</button><br><br>
-			
 		</form>
 	</div>
+
+	<div style=" float:left; width:40%;">
+		<form class="navbar-form" method="post" name="form2" >
+			<input style="width: 300px; margin-left: 85px;" class="form-control" type="text" name="username" placeholder="Usuari" required=""><br>
+			<input style="width: 300px; margin-left: 85px; "class="form-control" type="text" name="llibreID" placeholder="ID del llibre" required=""><br>
+			<input style="width: 300px; margin-left: 85px;" class="form-control" type="text" name="poguerEditar" placeholder="ID encàrrec" required=""><br>
+			<button title="Una comanda podrà ser prorrogada un sol cop, augmentant així la seva durada per 10 dies més." class="btn btn-warning" name="submit2" type="submit">Prorrogar</button><br><br>
+		</form>
+	</div>
+</div>
 	<?php
 	$var1 = '<p style="color:yellow;background-color:green;">RETORNAT</p>';
 		if(isset($_POST['submit1'])){
@@ -96,6 +112,7 @@
 			mysqli_query($db,"UPDATE encarrecs 
 			SET Aprovació = '$var1' 
 			where llibreID='$_POST[llibreID]' && poguerEditar = '$_POST[poguerEditar]'");
+
 			mysqli_query($db,"UPDATE llibres 
 			SET quantitat = quantitat + 1 
 			where llibreID = $_POST[llibreID]");
@@ -106,6 +123,35 @@
 			<?php
 		}
 	}
+		?>
+		<!-- Allargar el període de l'encàrrec -->
+		<?php
+		
+		date_default_timezone_set('Europe/Madrid');
+		$date = date('Y-m-d', time());
+		$_POST['date'] = $date;
+
+		$date2 = date('Y-m-d', strtotime($date." + 30 days"));
+		$_POST['date2'] = $date2;
+
+		$date3 = date('Y-m-d', strtotime($date2." + 10 days"));
+		$_POST['date3'] = $date3;
+
+	$var2 = '<p style="color:green;background-color:yellow;">ALLARGAT</p>';
+		if(isset($_POST['submit2'])){
+		if(isset($_SESSION['login_user'])){
+			$cPro ="SELECT cProrroga from encarrecs where poguerEditar = '$_POST[poguerEditar]'	";
+			if($cPro < 1){
+				mysqli_query($db,"UPDATE encarrecs
+					SET cProrroga = cProrroga + 1 where llibreID = '$_POST[llibreID]' && poguerEditar = '$_POST[poguerEditar]'");
+				mysqli_query($db,"UPDATE encarrecs 
+					SET Aprovació = '$var2' 
+					where llibreID='$_POST[llibreID]' && poguerEditar = '$_POST[poguerEditar]'");
+				mysqli_query($db,"UPDATE encarrecs SET dataRetorn = '$date3' where llibreID = '$_POST[llibreID]' && poguerEditar = '$_POST[poguerEditar]'");
+			} 
+		}
+	}
+
 		?>
 	<?php
 	$c = 0;
