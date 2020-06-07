@@ -45,7 +45,7 @@
 			background-color: black;
 		}
 		.caixa3{
-			height: 500px;
+			height: 570px;
 		    width: 500px;
 		    background-color: #0d1f1f;
 		    margin: 100px auto;
@@ -110,6 +110,8 @@
 		<h1 style="text-align: center; font-size: 40px;">La teva Llibreria Online</h1><br>
 		<h1 style="text-align: center; font-size: 25px;">Canvi de contrasenya</h1><br>
 		<form style=" margin: auto 122px;" action="" method="post">
+			<input type="text" name="primerNom" class="form-control" placeholder="Nom" required=""><br>
+			<input type="text" name="primerCognom" class="form-control" placeholder="Cognom" required=""><br>
 			<input type="text" name="username" class="form-control" placeholder="Nom d'usuari" required=""><br>
 			<input type="text" name="email" class="form-control" placeholder="Correu" required=""><br>
 			<input type="text" name="password" class="form-control" placeholder="Nova contrasenya" required=""><br>
@@ -120,13 +122,40 @@
 	//Si apretem el botó del formulari...
 		if(isset($_POST['submit'])){
 			//Si l'usuari i el correu introduits són els assignats a l'usuari que s'ha introduit, seran canviats.
-			if(mysqli_query($db,"UPDATE client SET password = '$_POST[password]' WHERE username = '$_POST[username]' && email = '$_POST[email]';")){
-				?>
+			$contador = 0;
+			$sql = "SELECT primerNom, primerCognom, username, email FROM `client`";
+			$res = mysqli_query($db,$sql);
+
+			while($row = mysqli_fetch_assoc($res)) {
+				if($row['primerNom'] == $_POST['primerNom']){
+					$contador = $contador + 1;
+				}
+				if($row['primerCognom'] == $_POST['primerCognom']){
+					$contador = $contador + 1;
+				}
+				if($row['username'] == $_POST['username']){
+					$contador = $contador + 1;
+				}
+				if($row['email'] == $_POST['email']){
+					$contador = $contador + 1;
+				}
+
+				
+			}
+			if($contador == 4){
+					mysqli_query($db,"UPDATE client SET password = '$_POST[password]' WHERE username = '$_POST[username]' && email = '$_POST[email]' && primerNom = '$_POST[primerNom]' && primerCognom = '$_POST[primerCognom]';");
+					?>
 					<div class="alert alert-success">
 						<strong>La contrasenya ha estat canviada.</strong>
 					</div>
-				<?php
-			}
+					<?php
+				} else {
+					?>
+					<div class="alert alert-danger">
+						<strong>Alguna dada és incorrecta.</strong>
+					</div>
+					<?php
+				}
 		}
 	?>
 </body>
